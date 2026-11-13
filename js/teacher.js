@@ -40,7 +40,22 @@
       .sort((a, b) => b.score - a.score);
   }
 
+  function renderTopics() {
+    const stats = topicStats();
+    const max = Math.max(1, ...stats.map((s) => s.score));
+    const best = stats[0];
+    const banner = best && best.score > 0
+      ? `<div class="banner">Most confusing topic: <b>${esc(best.topic)}</b> (score ${best.score})</div>`
+      : `<div class="banner">No open doubts yet.</div>`;
+    const bars = stats.map((s) =>
+      `<div class="bar-row"><span>${esc(s.topic)}</span>` +
+      `<div class="bar"><i style="width:${Math.round((s.score / max) * 100)}%"></i></div>` +
+      `<em>${s.score}</em></div>`).join('');
+    sec('tTopics').innerHTML = banner + bars;
+  }
+
   DD.renderTeacher = () => {
     renderStats();
+    renderTopics();
   };
 })();

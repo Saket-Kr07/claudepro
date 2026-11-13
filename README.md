@@ -23,9 +23,9 @@ Students post anonymous doubts tagged with a topic and upvote the ones they shar
 ## Team contributions
 | Member | Files | Responsibility |
 |---|---|---|
-| **Vansh (claudepro)** — lead | `index.html`, `js/store.js`, `js/student.js`, `js/app.js` | App structure, data layer, anonymous IDs, vote/unvote logic and its anti-inflation guarantee, posting with validation, sorting/filtering/search, routing, live sync between tabs |
-| **Member 2** | `js/teacher.js` | Teacher dashboard: stats, confusion score per topic, top-voted doubts, mark answered, vote-integrity check |
-| **Member 3** | `css/style.css`, `README.md`, demo proof | UI styling and responsive layout, documentation, screenshots and screen recording |
+| Saket Kumar — lead | `index.html`, `js/store.js`, `js/student.js`, `js/app.js` | App structure, data layer, anonymous IDs, vote/unvote logic and its anti-inflation guarantee, posting with validation, sorting/filtering/search, routing, live sync between tabs |
+| Shailie Sinha | `js/teacher.js` | Teacher dashboard: stats, confusion score per topic, top-voted doubts, mark answered, vote-integrity check |
+| Rakhi Nagar | `css/style.css`, `README.md`, demo proof | UI styling and responsive layout, documentation, screenshots and screen recording |
 
 ## Project structure
 ```

@@ -76,12 +76,23 @@
       : `<div class="integrity ok">Integrity check passed: ${qs().length} doubts, no inflated votes</div>`;
   }
 
+  function renderFooter() {
+    sec('tFooter').innerHTML = '<button id="resetDemo">Reset to sample data</button>';
+  }
+
   document.addEventListener('click', (e) => {
     const b = e.target.closest('[data-answer]');
-    if (!b) return;
-    DD.markAnswered(b.dataset.answer);
-    DD.toast('Marked as answered');
-    DD.render();
+    if (b) {
+      DD.markAnswered(b.dataset.answer);
+      DD.toast('Marked as answered');
+      DD.render();
+      return;
+    }
+    if (e.target.closest('#resetDemo')) {
+      DD.reset();
+      DD.toast('Sample data restored');
+      DD.render();
+    }
   });
 
   DD.renderTeacher = () => {
@@ -89,5 +100,6 @@
     renderTopics();
     renderTop();
     renderIntegrity();
+    renderFooter();
   };
 })();

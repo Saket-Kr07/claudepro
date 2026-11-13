@@ -28,6 +28,18 @@
       tile(all.length - open, 'Answered') + tile(votes, 'Total votes');
   }
 
+  // confusion score = votes on open doubts + number of open doubts, per topic
+  function topicStats() {
+    const topics = (DD.TOPICS || []).map((t) => t.name || t);
+    return topics
+      .map((topic) => {
+        const open = qs().filter((q) => q.topic === topic && !q.answered);
+        const votes = open.reduce((n, q) => n + DD.votes(q), 0);
+        return { topic, doubts: open.length, votes, score: votes + open.length };
+      })
+      .sort((a, b) => b.score - a.score);
+  }
+
   DD.renderTeacher = () => {
     renderStats();
   };

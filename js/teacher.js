@@ -60,9 +60,17 @@
     sec('tTop').innerHTML = '<h3>Top 5 open doubts</h3>' + (top.length
       ? top.map((q) =>
           `<div class="top-item"><b>${DD.votes(q)}</b> ${esc(q.text)} <small>${esc(q.topic)}</small>` +
-          `</div>`).join('')
+          `<button data-answer="${q.id}">Mark answered</button></div>`).join('')
       : '<p>Nothing open. Nice work!</p>');
   }
+
+  document.addEventListener('click', (e) => {
+    const b = e.target.closest('[data-answer]');
+    if (!b) return;
+    DD.markAnswered(b.dataset.answer);
+    DD.toast('Marked as answered');
+    DD.render();
+  });
 
   DD.renderTeacher = () => {
     renderStats();

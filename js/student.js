@@ -28,9 +28,10 @@
     toast("✅ Doubt posted anonymously");
   });
 
-  $("#switchStudent").addEventListener("click", () => {
-    const id = DD.switchStudent();
-    DD.render(); toast(`Now acting as ${DD.shortId(id)}`);
+  // Demo helper: start a fresh anonymous browser session (no identity is ever shown)
+  $("#newSession").addEventListener("click", () => {
+    DD.newSession();
+    DD.render(); toast("🔄 New anonymous browser session started");
   });
 
   // ---------- Sort / search ----------
@@ -83,9 +84,13 @@
       </div>`;
     }).join("");
     $("#list").querySelectorAll("[data-vote]").forEach(b => b.addEventListener("click", () => {
-      const added = DD.toggleVote(b.dataset.vote);
-      toast(added ? "👍 Vote added" : "↩️ Vote removed");
+      const res = DD.toggleVote(b.dataset.vote);
+      if (res === "blocked") { toast("⏳ Too fast. One vote per question per session."); return; }
+      toast(res ? "👍 Vote added" : "↩️ Vote removed");
       DD.render();
+      // briefly lock the button so double-clicks can't inflate
+      const nb = document.querySelector(`[data-vote="${b.dataset.vote}"]`);
+      if (nb) { nb.disabled = true; setTimeout(() => nb.disabled = false, DD.DEBOUNCE_MS); }
     }));
   }
 

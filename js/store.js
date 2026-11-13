@@ -1,11 +1,12 @@
-/* DoubtDrop — data layer: state, persistence, anonymous IDs, vote logic, helpers.
+/* DoubtDrop — data layer: state, persistence, anonymous session tokens, debounced vote logic, helpers.
    Owner: Vansh (claudepro) */
 window.DD = (() => {
   "use strict";
 
   const TOPICS = ["Binary Trees", "BST", "Heaps", "Graph Basics", "BFS / DFS", "Shortest Paths", "Complexity"];
   const STORE_KEY = "doubtdrop.v1.state";
-  const ID_KEY = "doubtdrop.v1.anonId";
+  const SESSION_KEY = "doubtdrop.v1.session"; // sessionStorage: one voter token per browser session
+  const DEBOUNCE_MS = 600;
   const MIN_LEN = 10, MAX_LEN = 280;
 
   // ---------- Sample data (fictional) ----------
@@ -44,16 +45,24 @@ window.DD = (() => {
   }
   function save(s) { try { localStorage.setItem(STORE_KEY, JSON.stringify(s || DD.state)); } catch (e) {} }
 
-  // ---------- Anonymous identity ----------
-  function newId() { return "s-" + Math.random().toString(36).slice(2, 8); }
-  function shortId(id) { return "Student #" + id.slice(-4).toUpperCase(); }
-  function switchStudent() { DD.myId = newId(); localStorage.setItem(ID_KEY, DD.myId); return DD.myId; }
+  // ---------- Anonymous browser session (TWIST) ----------
+  // A random token lives in sessionStorage only: one vote per question per browser session.
+  // It is never shown in the UI, and questions never store who posted them.
+  function newId() { return "s-" + Math.random().toString(36).slice(2, 10); }
+  function newSession() { DD.myId = newId(); sessionStorage.setItem(SESSION_KEY, DD.myId); return DD.myId; }
+  function myVoteCount() { return DD.state.questions.filter(q => q.voters.includes(DD.myId)).length; }
 
   // ---------- Votes ----------
   // Vote count is ALWAYS derived from the set of unique voters — never a separate counter.
   const votes = q => q.voters.length;
   const hasVoted = q => q.voters.includes(DD.myId);
+  // Debounced toggle: rapid repeat clicks on the same question are ignored (anti-inflation).
+  const lastToggle = {};
   function toggleVote(id) {
+    const now = Date.now();
+    if (now - (lastToggle[id] || 0) < DEBOUNCE_MS) return "blocked";
+    lastToggle[id] = now;
+    DD.state = load(); // re-read latest state so another tab can't cause a stale double vote
     const q = DD.state.questions.find(x => x.id === id);
     if (!q) return null;
     const i = q.voters.indexOf(DD.myId);
@@ -99,16 +108,16 @@ window.DD = (() => {
   }
 
   const DD = {
-    TOPICS, STORE_KEY, MIN_LEN, MAX_LEN,
+    TOPICS, STORE_KEY, MIN_LEN, MAX_LEN, DEBOUNCE_MS,
     state: null, myId: null,
     load, save, reload, reset, seed,
-    newId, shortId, switchStudent,
+    newId, newSession, myVoteCount,
     votes, hasVoted, toggleVote, addQuestion, markAnswered,
     $, esc, ago, toast,
     render: () => {}, // set by app.js
   };
   DD.state = load();
-  DD.myId = localStorage.getItem(ID_KEY) || newId();
-  localStorage.setItem(ID_KEY, DD.myId);
+  DD.myId = sessionStorage.getItem(SESSION_KEY) || newId();
+  sessionStorage.setItem(SESSION_KEY, DD.myId);
   return DD;
 })();

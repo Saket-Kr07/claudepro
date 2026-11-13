@@ -54,8 +54,19 @@
     sec('tTopics').innerHTML = banner + bars;
   }
 
+  function renderTop() {
+    const top = qs().filter((q) => !q.answered)
+      .sort((a, b) => DD.votes(b) - DD.votes(a)).slice(0, 5);
+    sec('tTop').innerHTML = '<h3>Top 5 open doubts</h3>' + (top.length
+      ? top.map((q) =>
+          `<div class="top-item"><b>${DD.votes(q)}</b> ${esc(q.text)} <small>${esc(q.topic)}</small>` +
+          `</div>`).join('')
+      : '<p>Nothing open. Nice work!</p>');
+  }
+
   DD.renderTeacher = () => {
     renderStats();
     renderTopics();
+    renderTop();
   };
 })();

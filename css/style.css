@@ -13,7 +13,7 @@ body::before{content:"";position:fixed;inset:0 0 auto 0;height:320px;background:
 /* Header */
 header{position:sticky;top:0;z-index:5;background:rgba(21,26,45,.92);backdrop-filter:blur(10px);color:#fff;padding:14px 28px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;box-shadow:0 4px 20px rgba(21,26,45,.15)}
 header h1{margin:0;font-size:22px;font-weight:800;letter-spacing:-.3px;display:flex;align-items:center;gap:8px}
-header h1 span:not(.logo){background:linear-gradient(135deg,#a5b4fc,#c4b5fd);-webkit-background-clip:text;background-clip:text;color:transparent}
+header h1 .brand span{background:linear-gradient(135deg,#a5b4fc,#c4b5fd);-webkit-background-clip:text;background-clip:text;color:transparent}
 .logo{display:inline-grid;place-items:center;width:34px;height:34px;border-radius:10px;background:var(--grad);font-size:17px;box-shadow:0 4px 12px rgba(91,91,247,.4)}
 header .tag{font-size:13px;color:#a0a6bd}
 nav{margin-left:auto;display:flex;gap:4px;background:rgba(255,255,255,.08);padding:4px;border-radius:999px}
@@ -30,7 +30,7 @@ main{max-width:1120px;margin:0 auto;padding:28px 24px}
 /* Layout + cards */
 .grid{display:grid;grid-template-columns:360px 1fr;gap:24px;align-items:start}
 .grid > div:first-child{position:sticky;top:90px}
-.two{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.two{display:grid;grid-template-columns:1fr 1.15fr;gap:24px;align-items:start}
 .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:22px;box-shadow:var(--shadow)}
 .card h2{margin:0 0 16px;font-size:17px;font-weight:700;letter-spacing:-.2px}
 .hidden{display:none!important}
@@ -96,7 +96,7 @@ textarea:focus,select:focus,input:focus{outline:none;border-color:var(--accent);
 .stat .k{font-size:13px;color:var(--muted);position:relative;z-index:1}
 .hot-banner{background:linear-gradient(135deg,#fff7ed,#ffedd5);border:1px solid #fed7aa;color:#9a3412;border-radius:14px;padding:16px 18px;margin-bottom:22px;font-size:15px;box-shadow:var(--shadow)}
 .hot-banner b{color:#7c2d12}
-.bar-row{display:grid;grid-template-columns:120px 1fr 80px;gap:12px;align-items:center;margin:12px 0;font-size:14px;font-weight:500}
+.bar-row{display:grid;grid-template-columns:120px 1fr 120px;gap:12px;align-items:center;margin:12px 0;font-size:14px;font-weight:500}
 .bar{background:#f1f2f8;border-radius:999px;height:12px;overflow:hidden}
 .bar > div{height:100%;background:var(--grad);border-radius:999px;transition:width .6s cubic-bezier(.2,.8,.2,1)}
 .bar-row.hot .bar > div{background:linear-gradient(90deg,#fb923c,#ef4444)}
@@ -122,6 +122,12 @@ th{font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;le
   main{padding:18px 14px}
 }
 @media (max-width:480px){
-  .bar-row{grid-template-columns:90px 1fr 60px}
+  .bar-row{grid-template-columns:90px 1fr 96px}
   .twist{flex-direction:column;gap:4px}
 }
+
+/* Teacher table polish */
+#topTable td:nth-child(3) b{display:inline-block;min-width:34px;text-align:center;background:var(--accent-soft);color:var(--accent);border-radius:8px;padding:2px 6px}
+#topTable td:last-child{text-align:right}
+.bar-row{padding:6px 8px;border-radius:10px;margin:4px -8px}
+.bar-row.hot{background:var(--warn-soft)}

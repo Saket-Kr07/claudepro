@@ -14,3 +14,9 @@
   nav button{background:transparent;border:1px solid #555;color:#ddd;padding:7px 14px;border-radius:999px;cursor:pointer;font-size:14px}
   nav button.active{background:#fff;color:var(--ink);border-color:#fff}
   main{max-width:1040px;margin:0 auto;padding:20px}
+  .grid{display:grid;grid-template-columns:340px 1fr;gap:20px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px}
+  .card h2{margin:0 0 12px;font-size:16px}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+  .hidden{display:none!important}
+  footer{text-align:center;font-size:12px;color:var(--muted);padding:20px}

@@ -1,0 +1,16 @@
+/* DoubtDrop styles — owner: Member 3 */
+  :root{
+    --bg:#f6f5f1; --card:#ffffff; --ink:#1d1d1f; --muted:#6b6b70; --line:#e4e2dc;
+    --accent:#3b5bdb; --accent-soft:#e7ecff; --good:#2f9e44; --good-soft:#e6f6ea;
+    --warn:#e8590c; --warn-soft:#fff1e6; --bad:#c92a2a; --radius:12px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink);line-height:1.45}
+  header{background:var(--ink);color:#fff;padding:14px 20px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+  header h1{margin:0;font-size:20px;letter-spacing:.2px}
+  header h1 span{color:#9fb3ff}
+  header .tag{font-size:12px;color:#bbb}
+  nav{margin-left:auto;display:flex;gap:6px}
+  nav button{background:transparent;border:1px solid #555;color:#ddd;padding:7px 14px;border-radius:999px;cursor:pointer;font-size:14px}
+  nav button.active{background:#fff;color:var(--ink);border-color:#fff}
+  main{max-width:1040px;margin:0 auto;padding:20px}

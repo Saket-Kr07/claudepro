@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>DoubtDrop — Anonymous Lecture Doubt Box</title>
+<meta name="description" content="DoubtDrop: an anonymous lecture doubt box where students post and upvote questions, with a teacher dashboard that highlights the most confusing topics." />
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+<header>
+  <h1>Doubt<span>Drop</span></h1>
+  <span class="tag">Anonymous lecture doubt box · <span id="lectureName">DSA — Lecture 7: Trees &amp; Graphs</span></span>
+  <nav>
+    <button id="tabStudent" class="active">Student view</button>
+    <button id="tabTeacher">Teacher dashboard</button>
+  </nav>
+</header>
+
+<main>
+  <!-- STUDENT VIEW -->
+  <section id="studentView" class="grid">
+    <div>
+      <div class="card">
+        <h2>Drop a doubt (anonymous)</h2>
+        <form id="askForm" novalidate>
+          <label for="topic">Topic</label>
+          <select id="topic">
+            <option value="">— choose a topic —</option>
+          </select>
+          <label for="qtext">Your question</label>
+          <textarea id="qtext" maxlength="280" placeholder="e.g. Why does BFS use a queue but DFS uses a stack?"></textarea>
+          <div class="hint"><span>No name or login is stored.</span><span id="count">0/280</span></div>
+          <div class="err" id="err"></div>
+          <button class="btn" id="submitBtn" type="submit">Post doubt anonymously</button>
+        </form>
+        <div class="anon">
+          <span>You are <b id="anonId">Student #—</b>. Your votes are tied to this anonymous ID only.</span>
+        </div>
+        <div class="anon">
+          <span>Demo: act as a different student to test voting</span>
+          <button class="btn ghost" id="switchStudent" type="button">Switch student</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Class doubts</h2>
+      <div class="toolbar">
+        <div class="seg" role="group" aria-label="Sort">
+          <button data-sort="votes" class="active">Most voted</button>
+          <button data-sort="new">Newest</button>
+        </div>
+        <input type="text" id="search" placeholder="Search doubts…" />
+      </div>
+      <div class="chips" id="topicChips"></div>
+      <div id="list"></div>
+    </div>
+  </section>
+
+  <!-- TEACHER VIEW -->
+  <section id="teacherView" class="hidden">
+    <div class="stats">
+      <div class="card stat"><div class="v" id="sQ">0</div><div class="k">Doubts posted</div></div>
+      <div class="card stat"><div class="v" id="sV">0</div><div class="k">Total votes</div></div>
+      <div class="card stat"><div class="v" id="sS">0</div><div class="k">Unique students voting</div></div>
+      <div class="card stat"><div class="v" id="sO">0</div><div class="k">Still unanswered</div></div>
+    </div>
+
+    <div class="hot-banner" id="hotBanner"></div>
+
+    <div class="two">
+      <div class="card">
+        <h2>Most confusing topics</h2>
+        <p style="margin:-6px 0 8px;font-size:12px;color:var(--muted)">Confusion score = number of doubts + votes on unanswered doubts in that topic</p>
+        <div id="topicBars"></div>
+      </div>
+      <div class="card">
+        <h2>Top voted doubts</h2>
+        <table>
+          <thead><tr><th>#</th><th>Doubt</th><th>Votes</th><th></th></tr></thead>
+          <tbody id="topTable"></tbody>
+        </table>
+        <div class="integrity" id="integrity"></div>
+      </div>
+    </div>
+    <div style="text-align:right;margin-top:16px">
+      <button class="btn ghost" id="resetDemo" type="button">Reset to sample data</button>
+    </div>
+  </section>
+</main>
+
+<div class="toast" id="toast"></div>
+<footer>DoubtDrop · VibeSprint 1.0 · Data stays in this browser (localStorage) · all sample data is fictional</footer>
+
+<script src="js/store.js"></script>
+<script src="js/student.js"></script>
+<script src="js/teacher.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

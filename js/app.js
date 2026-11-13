@@ -5,7 +5,8 @@
   const { $ } = DD;
 
   DD.render = () => {
-    $("#anonId").textContent = DD.shortId(DD.myId);
+    const n = DD.myVoteCount();
+    $("#myVotes").textContent = `${n} doubt${n !== 1 ? "s" : ""}`;
     if (DD.renderStudent) DD.renderStudent();
     if (DD.renderTeacher) DD.renderTeacher();
   };

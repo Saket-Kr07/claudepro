@@ -52,3 +52,5 @@
   .topic{background:var(--accent-soft);color:var(--accent);padding:2px 8px;border-radius:999px;font-weight:600}
   .badge-ans{background:var(--good-soft);color:var(--good);padding:2px 8px;border-radius:999px;font-weight:600}
   .empty{text-align:center;color:var(--muted);padding:30px 10px}
+  .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--ink);color:#fff;padding:10px 16px;border-radius:8px;font-size:14px;opacity:0;transition:all .25s;z-index:10}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}

@@ -9,7 +9,7 @@
 </head>
 <body>
 <header>
-  <h1>Doubt<span>Drop</span></h1>
+  <h1><span class="logo">💬</span>Doubt<span>Drop</span></h1>
   <span class="tag">Anonymous lecture doubt box · <span id="lectureName">DSA — Lecture 7: Trees &amp; Graphs</span></span>
   <nav>
     <button id="tabStudent" class="active">Student view</button>
@@ -18,6 +18,9 @@
 </header>
 
 <main>
+  <div id="twistBanner" class="twist">
+    <b>🔒 Minute-40 twist:</b> one vote per question per browser session. Click ▲ again to remove your vote, rapid repeat clicks are blocked (debounced), and no poster identity is ever shown.
+  </div>
   <!-- STUDENT VIEW -->
   <section id="studentView" class="grid">
     <div>
@@ -35,11 +38,11 @@
           <button class="btn" id="submitBtn" type="submit">Post doubt anonymously</button>
         </form>
         <div class="anon">
-          <span>You are <b id="anonId">Student #—</b>. Your votes are tied to this anonymous ID only.</span>
+          <span>🕶️ Fully anonymous: no names or IDs are stored with doubts or shown anywhere. You've voted on <b id="myVotes">0 doubts</b> this session.</span>
         </div>
         <div class="anon">
-          <span>Demo: act as a different student to test voting</span>
-          <button class="btn ghost" id="switchStudent" type="button">Switch student</button>
+          <span>Demo: simulate another student (new browser session)</span>
+          <button class="btn ghost" id="newSession" type="button">New session</button>
         </div>
       </div>
     </div>
@@ -76,7 +79,7 @@
         <div id="topicBars"></div>
       </div>
       <div class="card">
-        <h2>Top voted doubts</h2>
+        <h2>Top unresolved doubts</h2>
         <table>
           <thead><tr><th>#</th><th>Doubt</th><th>Votes</th><th></th></tr></thead>
           <tbody id="topTable"></tbody>

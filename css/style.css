@@ -20,3 +20,13 @@
   .two{display:grid;grid-template-columns:1fr 1fr;gap:20px}
   .hidden{display:none!important}
   footer{text-align:center;font-size:12px;color:var(--muted);padding:20px}
+  label{display:block;font-size:13px;font-weight:600;margin:10px 0 4px}
+  textarea,select,input[type=text]{width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:8px;font:inherit;background:#fff}
+  textarea{min-height:96px;resize:vertical}
+  textarea:focus,select:focus,input:focus{outline:2px solid var(--accent-soft);border-color:var(--accent)}
+  .hint{font-size:12px;color:var(--muted);display:flex;justify-content:space-between;margin-top:4px}
+  .err{color:var(--bad);font-size:13px;min-height:18px;margin-top:6px}
+  .btn{background:var(--accent);color:#fff;border:0;border-radius:8px;padding:10px 14px;font:inherit;font-weight:600;cursor:pointer;width:100%;margin-top:6px}
+  .btn:disabled{opacity:.5;cursor:not-allowed}
+  .btn.ghost{background:transparent;color:var(--accent);border:1px solid var(--accent);width:auto;font-weight:500;padding:6px 10px;font-size:13px;margin:0}
+  .anon{font-size:12px;color:var(--muted);margin-top:12px;padding-top:12px;border-top:1px dashed var(--line);display:flex;justify-content:space-between;align-items:center;gap:8px}

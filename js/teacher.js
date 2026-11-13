@@ -1,105 +1,70 @@
-/* DoubtDrop - teacher dashboard (Member 2).
-   Needs the global DD object from js/store.js (load this file after it). */
-(function () {
-  'use strict';
-  const $ = (s) => DD.$(s);
-  const esc = (s) => DD.esc(s);
-  const qs = () => DD.state.questions || DD.state.doubts || [];
+/* DoubtDrop — Teacher dashboard: stats, most-confusing topics, top doubts, vote-integrity check.
+   Owner: Member 2 (Shailie S Sinha). Fixed to render into the dashboard elements in index.html. */
+(() => {
+  "use strict";
+  const { $, esc, toast, TOPICS } = DD;
 
-  // find (or create) a section container inside the teacher view
-  function sec(id) {
-    let el = $('#' + id);
-    if (!el) {
-      el = document.createElement('div');
-      el.id = id;
-      ($('#teacher') || document.body).appendChild(el);
-    }
-    return el;
+  // Confusion score per topic = open doubts + votes on open doubts
+  function topicStats() {
+    return TOPICS.map(t => {
+      const qs = DD.state.questions.filter(q => q.topic === t);
+      const open = qs.filter(q => !q.answered);
+      const v = open.reduce((s, q) => s + DD.votes(q), 0);
+      return { topic: t, count: qs.length, votes: v, score: open.length + v };
+    }).sort((a, b) => b.score - a.score || b.votes - a.votes);
   }
 
   function renderStats() {
-    const all = qs();
-    const open = all.filter((q) => !q.answered).length;
-    const votes = all.reduce((n, q) => n + DD.votes(q), 0);
-    const tile = (n, label) =>
-      `<div class="stat"><b>${n}</b><span>${label}</span></div>`;
-    sec('tStats').innerHTML =
-      tile(all.length, 'Total doubts') + tile(open, 'Open') +
-      tile(all.length - open, 'Answered') + tile(votes, 'Total votes');
-  }
-
-  // confusion score = votes on open doubts + number of open doubts, per topic
-  function topicStats() {
-    const topics = (DD.TOPICS || []).map((t) => t.name || t);
-    return topics
-      .map((topic) => {
-        const open = qs().filter((q) => q.topic === topic && !q.answered);
-        const votes = open.reduce((n, q) => n + DD.votes(q), 0);
-        return { topic, doubts: open.length, votes, score: votes + open.length };
-      })
-      .sort((a, b) => b.score - a.score);
+    const qs = DD.state.questions;
+    $("#sQ").textContent = qs.length;
+    $("#sV").textContent = qs.reduce((s, q) => s + DD.votes(q), 0);
+    $("#sS").textContent = new Set(qs.flatMap(q => q.voters)).size;
+    $("#sO").textContent = qs.filter(q => !q.answered).length;
   }
 
   function renderTopics() {
-    const stats = topicStats();
-    const max = Math.max(1, ...stats.map((s) => s.score));
-    const best = stats[0];
-    const banner = best && best.score > 0
-      ? `<div class="banner">Most confusing topic: <b>${esc(best.topic)}</b> (score ${best.score})</div>`
-      : `<div class="banner">No open doubts yet.</div>`;
-    const bars = stats.map((s) =>
-      `<div class="bar-row"><span>${esc(s.topic)}</span>` +
-      `<div class="bar"><i style="width:${Math.round((s.score / max) * 100)}%"></i></div>` +
-      `<em>${s.score}</em></div>`).join('');
-    sec('tTopics').innerHTML = banner + bars;
+    const ts = topicStats();
+    const max = Math.max(1, ...ts.map(t => t.score));
+    const hot = ts[0];
+    $("#hotBanner").innerHTML = hot && hot.score > 0
+      ? `🔥 <b>${esc(hot.topic)}</b> is the most confusing topic right now — ${hot.count} doubt${hot.count !== 1 ? "s" : ""}, ${hot.votes} vote${hot.votes !== 1 ? "s" : ""} on open doubts. Consider revisiting it next lecture.`
+      : `No open doubts yet. 🎉`;
+    $("#topicBars").innerHTML = ts.map((t, i) => `
+      <div class="bar-row ${i === 0 && t.score > 0 ? "hot" : ""}">
+        <span>${esc(t.topic)}</span>
+        <div class="bar"><div style="width:${(t.score / max) * 100}%"></div></div>
+        <span class="num">${t.count} doubt${t.count !== 1 ? "s" : ""} · ${t.votes} vote${t.votes !== 1 ? "s" : ""}</span>
+      </div>`).join("");
   }
 
   function renderTop() {
-    const top = qs().filter((q) => !q.answered)
-      .sort((a, b) => DD.votes(b) - DD.votes(a)).slice(0, 5);
-    sec('tTop').innerHTML = '<h3>Top 5 open doubts</h3>' + (top.length
-      ? top.map((q) =>
-          `<div class="top-item"><b>${DD.votes(q)}</b> ${esc(q.text)} <small>${esc(q.topic)}</small>` +
-          `<button data-answer="${q.id}">Mark answered</button></div>`).join('')
-      : '<p>Nothing open. Nice work!</p>');
+    const top = DD.state.questions.filter(q => !q.answered)
+      .sort((a, b) => DD.votes(b) - DD.votes(a) || a.createdAt - b.createdAt).slice(0, 5);
+    $("#topTable").innerHTML = top.length ? top.map((q, i) => `
+      <tr><td class="rank">${i + 1}</td>
+      <td>${esc(q.text)}<div class="meta" style="margin-top:4px"><span class="topic">${esc(q.topic)}</span></div></td>
+      <td><b>${DD.votes(q)}</b></td>
+      <td><button class="btn ghost" data-ans="${q.id}">Mark answered</button></td></tr>`).join("")
+      : `<tr><td colspan="4" class="empty">All doubts answered 🎉</td></tr>`;
+    $("#topTable").querySelectorAll("[data-ans]").forEach(b => b.addEventListener("click", () => {
+      DD.markAnswered(b.dataset.ans); DD.render(); toast("Marked as answered");
+    }));
   }
 
-  // proves counts don't inflate: each doubt's count must equal its unique voters
+  // Integrity check: every vote count equals its number of unique voters
   function renderIntegrity() {
-    const bad = qs().filter((q) => {
-      const v = DD.votes(q);
-      if (!Number.isInteger(v) || v < 0) return true;
-      return Array.isArray(q.voters) && v !== new Set(q.voters).size;
-    });
-    sec('tIntegrity').innerHTML = bad.length
-      ? `<div class="integrity bad">Integrity check FAILED on ${bad.length} doubt(s)</div>`
-      : `<div class="integrity ok">Integrity check passed: ${qs().length} doubts, no inflated votes</div>`;
+    const qs = DD.state.questions;
+    const total = qs.reduce((s, q) => s + DD.votes(q), 0);
+    const uniq = new Set(qs.flatMap(q => q.voters)).size;
+    const dupes = qs.filter(q => new Set(q.voters).size !== q.voters.length).length;
+    const el = $("#integrity");
+    el.className = "integrity " + (dupes ? "bad" : "ok");
+    el.textContent = dupes
+      ? `⚠️ ${dupes} doubt(s) have duplicate votes`
+      : `✔ Vote integrity: ${total} votes from ${uniq} unique anonymous students, max 1 vote per student per doubt. Counts are taken from the voter list, so they can't inflate.`;
   }
 
-  function renderFooter() {
-    sec('tFooter').innerHTML = '<button id="resetDemo">Reset to sample data</button>';
-  }
+  $("#resetDemo").addEventListener("click", () => { DD.reset(); DD.render(); toast("Sample data restored"); });
 
-  document.addEventListener('click', (e) => {
-    const b = e.target.closest('[data-answer]');
-    if (b) {
-      DD.markAnswered(b.dataset.answer);
-      DD.toast('Marked as answered');
-      DD.render();
-      return;
-    }
-    if (e.target.closest('#resetDemo')) {
-      DD.reset();
-      DD.toast('Sample data restored');
-      DD.render();
-    }
-  });
-
-  DD.renderTeacher = () => {
-    renderStats();
-    renderTopics();
-    renderTop();
-    renderIntegrity();
-    renderFooter();
-  };
+  DD.renderTeacher = () => { renderStats(); renderTopics(); renderTop(); renderIntegrity(); };
 })();

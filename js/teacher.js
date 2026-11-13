@@ -64,6 +64,18 @@
       : '<p>Nothing open. Nice work!</p>');
   }
 
+  // proves counts don't inflate: each doubt's count must equal its unique voters
+  function renderIntegrity() {
+    const bad = qs().filter((q) => {
+      const v = DD.votes(q);
+      if (!Number.isInteger(v) || v < 0) return true;
+      return Array.isArray(q.voters) && v !== new Set(q.voters).size;
+    });
+    sec('tIntegrity').innerHTML = bad.length
+      ? `<div class="integrity bad">Integrity check FAILED on ${bad.length} doubt(s)</div>`
+      : `<div class="integrity ok">Integrity check passed: ${qs().length} doubts, no inflated votes</div>`;
+  }
+
   document.addEventListener('click', (e) => {
     const b = e.target.closest('[data-answer]');
     if (!b) return;
@@ -76,5 +88,6 @@
     renderStats();
     renderTopics();
     renderTop();
+    renderIntegrity();
   };
 })();
